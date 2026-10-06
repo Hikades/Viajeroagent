@@ -1,0 +1,1910 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Agente viajero · Matemática Computacional</title>
+    <style>
+        :root {
+            --bg: #f4f6f7;
+            --ink: #142c3e;
+            --muted: #617482;
+            --line: #dce5e9;
+            --teal: #087c70;
+            --teal-light: #e5f5ef;
+            --orange: #b16c16;
+            --navy: #173e55;
+            --red: #b93c46;
+            --white: #fff;
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+        }
+
+
+        button, input, select {
+            font: inherit;
+            border-radius: 8px;
+        }
+
+
+        button {
+            cursor: pointer;
+            transition: background .15s, transform .15s;
+            border: 1px solid var(--line);
+            padding: 9px 13px;
+            background: white;
+            color: var(--ink);
+            font-weight: 650;
+        }
+
+
+        button:hover:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+
+        button:disabled {
+            cursor: not-allowed;
+            opacity: .44;
+        }
+
+
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        summary:focus-visible {
+            outline: 3px solid #53b6ce;
+            outline-offset: 3px;
+        }
+
+
+        .primary {
+            background: var(--teal);
+            border-color: var(--teal);
+            color: white;
+        }
+
+
+        .dark {
+            background: var(--navy);
+            border-color: var(--navy);
+            color: white;
+        }
+
+
+        .ghost {
+            background: transparent;
+        }
+
+
+        .small {
+            font-size: 12px;
+            padding: 7px 10px;
+        }
+
+
+        input, select {
+            padding: 9px;
+            border: 1px solid #c7d5dc;
+            color: var(--ink);
+            background: white;
+            min-width: 0;
+        }
+
+
+        input[type=number] {
+            width: 100%;
+        }
+
+
+        input:disabled, select:disabled {
+            background: #edf2f4;
+        }
+
+
+        h1, h2, h3, p {
+            margin: 0;
+        }
+
+
+        h1 {
+            font-size: clamp(25px, 3.2vw, 37px);
+            letter-spacing: -1.2px;
+            line-height: 1.18;
+        }
+
+
+        h2 {
+            font-size: 17px;
+            letter-spacing: -.3px;
+        }
+
+
+        h3 {
+            font-size: 14px;
+        }
+
+
+        .muted {
+            color: var(--muted);
+        }
+
+
+        .eyebrow {
+            font-size: 11px;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+            font-weight: 750;
+        }
+
+
+        .brandbar {
+            background: #102b3d;
+            color: #d3e3e9;
+        }
+
+
+        .brandbar .wrap {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding-top: 14px;
+            padding-bottom: 14px;
+        }
+
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: .3px;
+        }
+
+
+        .mark {
+            display: grid;
+            place-items: center;
+            background: #2a596b;
+            border: 1px solid #487685;
+            width: 30px;
+            height: 30px;
+            border-radius: 9px;
+            color: #91ecd0;
+            font-size: 18px;
+        }
+
+
+        .wrap {
+            max-width: 1440px;
+            margin: auto;
+            padding: 0 30px;
+        }
+
+
+        .hero {
+            display: flex;
+            justify-content: space-between;
+            gap: 24px;
+            align-items: center;
+            margin: 30px 0 24px;
+        }
+
+
+        .hero p {
+            margin-top: 10px;
+            max-width: 760px;
+        }
+
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            border: 1px solid var(--line);
+            background: white;
+            color: var(--muted);
+            border-radius: 25px;
+            padding: 7px 12px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+
+        .tag i {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--teal);
+        }
+
+
+        .workflow {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+
+        .workflow span {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+            background: #e7edf0;
+            color: #526b7b;
+        }
+
+
+        .workflow b {
+            margin-right: 8px;
+            color: var(--navy);
+        }
+
+
+        .layout {
+            display: grid;
+            grid-template-columns: 370px minmax(0, 1fr);
+            gap: 20px;
+            align-items: start;
+        }
+
+
+        .stack {
+            display: grid;
+            gap: 18px;
+        }
+
+
+        .card {
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 2px 3px #193d5003;
+        }
+
+
+        .card-head {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+
+        .card-body {
+            padding: 20px;
+        }
+
+
+        .stepnum {
+            display: inline-grid;
+            place-items: center;
+            width: 23px;
+            height: 23px;
+            margin-right: 8px;
+            border-radius: 6px;
+            background: #edf2f4;
+            color: var(--teal);
+            font-size: 12px;
+        }
+
+
+        .two {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+
+        .field {
+            display: grid;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 650;
+        }
+
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+
+
+        .actions button {
+            flex: 1;
+        }
+
+
+        .hint {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 12px;
+        }
+
+
+        .matrix-wrap {
+            overflow-x: auto;
+            margin-top: 16px;
+        }
+
+
+        .matrix {
+            border-collapse: separate;
+            border-spacing: 3px;
+            width: 100%;
+            font-size: 12px;
+            table-layout: fixed;
+        }
+
+
+        .matrix th {
+            text-align: center;
+            font-weight: 700;
+            height: 22px;
+        }
+
+
+        .matrix td {
+            text-align: center;
+            background: #f2f6f8;
+            border-radius: 5px;
+            height: 34px;
+            color: #536c7a;
+        }
+
+
+        .matrix .diag {
+            color: #a5b3bc;
+        }
+
+
+        .matrix input {
+            width: 100%;
+            height: 34px;
+            text-align: center;
+            padding: 2px;
+            border-radius: 5px;
+            font-size: 12px;
+            border-color: #cddbe2;
+        }
+
+
+        .matrix input.invalid {
+            border: 2px solid var(--red);
+            background: #fff1f2;
+        }
+
+
+        .notice {
+            font-size: 13px;
+            background: #eff4f7;
+            border-left: 3px solid #85a2b4;
+            padding: 12px 14px;
+            border-radius: 5px;
+            margin-top: 16px;
+        }
+
+
+        .notice.success {
+            background: var(--teal-light);
+            border-color: var(--teal);
+            color: #126153;
+        }
+
+
+        .notice.error {
+            background: #fff0f1;
+            border-color: var(--red);
+            color: #922735;
+        }
+
+
+        .notice.warning {
+            background: #fff6e9;
+            border-color: var(--orange);
+            color: #815319;
+        }
+
+
+        .repair {
+            margin-top: 14px;
+            padding: 14px;
+            background: #fff8ec;
+            border: 1px solid #f0d6a8;
+            border-radius: 10px;
+        }
+
+
+        .repair h3 {
+            margin-bottom: 6px;
+        }
+
+
+        .repair p {
+            font-size: 12px;
+            color: #7b602e;
+        }
+
+
+        .repair-grid {
+            display: grid;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+
+        .repair-row {
+            display: grid;
+            grid-template-columns: 64px 1fr;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+
+        .repair-row input {
+            width: 100%;
+        }
+
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+
+        .stat {
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: white;
+            padding: 16px;
+        }
+
+
+        .stat .label {
+            font-size: 11px;
+            color: var(--muted);
+            font-weight: 650;
+        }
+
+
+        .stat strong {
+            display: block;
+            font-size: 25px;
+            letter-spacing: -.7px;
+            margin-top: 3px;
+        }
+
+
+        .stat small {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+
+        .stat.accent {
+            background: var(--navy);
+            color: white;
+            border-color: var(--navy);
+        }
+
+
+        .stat.accent .label,
+        .stat.accent small {
+            color: #c2dce5;
+        }
+
+
+        .pill {
+            padding: 4px 9px;
+            background: #edf2f4;
+            border-radius: 30px;
+            font-size: 11px;
+            color: #5a7280;
+            font-weight: 650;
+        }
+
+
+        .pill.done {
+            background: var(--teal-light);
+            color: var(--teal);
+        }
+
+
+        .graph-zone {
+            position: relative;
+            background: #fbfcfd;
+            background-image: radial-gradient(#d8e3e8 .7px, transparent .7px);
+            background-size: 18px 18px;
+        }
+
+
+        .graph-zone svg {
+            display: block;
+            width: 100%;
+            height: 370px;
+            max-height: 55vh;
+        }
+
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 12px 15px 16px;
+            color: var(--muted);
+            font-size: 11px;
+            flex-wrap: wrap;
+        }
+
+
+        .legend span {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+
+        .legend i {
+            height: 3px;
+            width: 22px;
+            border-radius: 3px;
+            background: #b4c6d0;
+        }
+
+
+        .legend .current {
+            background: #d59935;
+        }
+
+
+        .legend .best {
+            background: var(--teal);
+        }
+
+
+        .route-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            background: #f0f7f5;
+            border-top: 1px solid var(--line);
+        }
+
+
+        .route-summary .route {
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: .3px;
+            margin-top: 3px;
+        }
+
+
+        .route-summary .distance {
+            white-space: nowrap;
+            font-size: 23px;
+            font-weight: 750;
+            color: var(--teal);
+        }
+
+
+        .route-summary .label {
+            font-size: 10px;
+            color: var(--teal);
+            font-weight: 750;
+            letter-spacing: .8px;
+        }
+
+
+        .progress {
+            height: 6px;
+            background: #e8eff2;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0 6px;
+        }
+
+
+        .progress div {
+            height: 100%;
+            background: var(--teal);
+            width: 0;
+            transition: width .2s;
+        }
+
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+
+
+        .controls button {
+            flex: 1;
+        }
+
+
+        .speed-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+
+        .speed-row select {
+            flex: 1;
+            padding: 6px;
+        }
+
+
+        .evaluation {
+            margin-top: 17px;
+            padding: 14px;
+            background: #f5f8fa;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+        }
+
+
+        .evaluation .label {
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 7px;
+        }
+
+
+        .evaluation strong {
+            display: block;
+            font-size: 14px;
+        }
+
+
+        .evaluation p {
+            font-size: 12px;
+            margin-top: 6px;
+            overflow-wrap: anywhere;
+        }
+
+
+        .evaluation .calc {
+            font-family: ui-monospace, monospace;
+            font-size: 12px;
+            color: var(--teal);
+            margin-top: 6px;
+        }
+
+
+        .results {
+            margin-top: 20px;
+        }
+
+
+        .results-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--line);
+        }
+
+
+        .results-toolbar select {
+            padding: 6px 9px;
+            font-size: 12px;
+        }
+
+
+        .results-toolbar .buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+
+        .table-scroll {
+            overflow-x: auto;
+        }
+
+
+        table.routes {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+
+        .routes th {
+            text-align: left;
+            background: #f7f9fa;
+            color: #607787;
+            font-size: 11px;
+            padding: 11px 20px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+
+        .routes td {
+            padding: 12px 20px;
+            border-top: 1px solid #edf1f3;
+        }
+
+
+        .routes td:last-child,
+        .routes th:last-child {
+            text-align: right;
+        }
+
+
+        .routes tr.optimal td {
+            background: #f0f9f5;
+        }
+
+
+        .route-cell {
+            font-weight: 600;
+            letter-spacing: .5px;
+            white-space: nowrap;
+        }
+
+
+        .optimal-label {
+            display: inline-block;
+            padding: 2px 7px;
+            margin-left: 8px;
+            font-size: 10px;
+            border-radius: 4px;
+            background: #cceee0;
+            color: #146852;
+        }
+
+
+        .pagination {
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid var(--line);
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+
+        .pagination div {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+
+        .explain {
+            margin: 20px 0 30px;
+            padding: 17px 20px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: white;
+        }
+
+
+        .explain summary {
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+
+        .explain p {
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+
+        .footer {
+            font-size: 11px;
+            color: #738793;
+            text-align: center;
+            padding: 0 15px 25px;
+        }
+
+
+        [hidden] {
+            display: none !important;
+        }
+
+
+        @media (max-width: 1100px) {
+            .layout {
+                grid-template-columns: 320px minmax(0, 1fr);
+            }
+            .wrap {
+                padding: 0 18px;
+            }
+            .stats {
+                gap: 8px;
+            }
+            .stat {
+                padding: 12px;
+            }
+            .stat strong {
+                font-size: 22px;
+            }
+        }
+
+
+        @media (max-width: 840px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+            .hero {
+                align-items: start;
+            }
+            .hero .tag {
+                display: none;
+            }
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .matrix-wrap {
+                max-width: 580px;
+                margin: 16px auto 0;
+            }
+            .graph-zone svg {
+                height: 390px;
+            }
+            .brandbar .eyebrow {
+                display: none;
+            }
+        }
+
+
+        @media (max-width: 480px) {
+            .wrap {
+                padding: 0 12px;
+            }
+            .hero {
+                margin-top: 22px;
+            }
+            .card-head, .card-body {
+                padding: 15px;
+            }
+            .graph-zone svg {
+                height: 300px;
+            }
+            .results-toolbar {
+                flex-wrap: wrap;
+                padding: 12px;
+            }
+            .routes td, .routes th {
+                padding: 10px;
+            }
+            .route-summary {
+                padding: 12px;
+            }
+            .route-summary .route {
+                font-size: 12px;
+            }
+            .route-summary .distance {
+                font-size: 19px;
+            }
+            .pagination {
+                padding: 12px;
+            }
+            .two {
+                gap: 8px;
+            }
+            .controls button {
+                padding: 9px 8px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="brandbar">
+        <div class="wrap">
+            <div class="brand">
+                <span class="mark" aria-hidden="true">⌁</span>
+                RUTA · Laboratorio de grafos
+            </div>
+            <span class="eyebrow">Matemática Computacional · UPC</span>
+        </div>
+    </header>
+
+
+    <main class="wrap">
+        <section class="hero">
+            <div>
+                <div class="eyebrow muted" style="margin-bottom: 9px">Proyecto académico / Fuerza bruta</div>
+                <h1>Problema del agente viajero</h1>
+                <p class="muted">Visita cada punto una vez, regresa al almacén y encuentra el recorrido de menor distancia.</p>
+            </div>
+            <span class="tag"><i></i>5–10 vértices · Grafo no dirigido</span>
+        </section>
+
+
+        <div class="workflow">
+            <span><b>01</b>Construye la red</span>
+            <span><b>02</b>Verifica sus conexiones</span>
+            <span><b>03</b>Compara los recorridos</span>
+        </div>
+
+
+        <div class="layout">
+            <aside class="stack">
+                <section class="card">
+                    <div class="card-head">
+                        <h2><span class="stepnum">1</span>Configurar el grafo</h2>
+                        <span class="pill" id="edgeCount">10 aristas</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="two">
+                            <label class="field">
+                                Cantidad de vértices
+                                <input id="vertexCount" type="number" min="5" max="10" step="1" value="5">
+                            </label>
+                            <label class="field">
+                                Construcción
+                                <select id="mode">
+                                    <option value="manual">Manual</option>
+                                    <option value="random">Aleatoria</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="actions">
+                            <button id="createGraph" class="dark">Crear grafo</button>
+                            <button id="sampleGraph">Ejemplo de reparto</button>
+                        </div>
+                        <p class="hint">A es el almacén. B, C… son los puntos de entrega. Las distancias son simuladas y se expresan en kilómetros.</p>
+                        
+                        <div class="matrix-wrap">
+                            <table id="matrix" class="matrix" aria-label="Matriz simétrica de distancias en kilómetros"></table>
+                        </div>
+                        <p class="hint">Edita las casillas blancas para definir las aristas. Deja una casilla vacía para indicar que no hay conexión. Usa valores positivos con hasta 2 decimales.</p>
+                        
+                        <button id="verify" class="primary" style="width: 100%; margin-top: 15px">Verificar ciclo hamiltoniano</button>
+                        
+                        <div id="status" class="notice" role="status" aria-live="polite">Ejemplo cargado. Verifica el grafo para comenzar.</div>
+                        
+                        <div id="repair" class="repair" hidden>
+                            <h3>Completar un recorrido</h3>
+                            <p id="repairRoute"></p>
+                            <p style="margin-top: 6px">Introduce las distancias de las conexiones sugeridas.</p>
+                            <div id="repairFields" class="repair-grid"></div>
+                            <button id="applyRepair" class="primary" style="width: 100%">Agregar conexiones y verificar</button>
+                        </div>
+                    </div>
+                </section>
+
+
+                <section class="card">
+                    <div class="card-head">
+                        <h2><span class="stepnum">2</span>Explorar las rutas</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="muted" style="font-size: 12px">Avanza una alternativa por vez o ejecuta la búsqueda completa.</p>
+                        <div class="controls">
+                            <button id="step">Siguiente paso</button>
+                            <button id="run" class="primary">Ejecutar todo</button>
+                        </div>
+                        <div class="controls">
+                            <button id="pause" disabled>Pausar</button>
+                            <button id="reset" class="ghost">Reiniciar análisis</button>
+                        </div>
+                        <label class="speed-row">
+                            Velocidad
+                            <select id="speed">
+                                <option value="fast">Rápida · por bloques</option>
+                                <option value="slow">Demostración · 1 paso / 0,6 s</option>
+                            </select>
+                        </label>
+                        <div class="progress" role="progressbar" aria-label="Avance de la exploración" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBar">
+                            <div id="progressFill"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span id="progressText">0 de 12 alternativas</span>
+                            <span id="progressPercent">0 %</span>
+                        </div>
+                        <div class="evaluation">
+                            <div class="label">ÚLTIMA ALTERNATIVA EVALUADA</div>
+                            <strong id="currentRoute">Todavía no hay un recorrido</strong>
+                            <p id="currentDetail">El primer vértice siempre será A.</p>
+                            <div id="currentCalc" class="calc"></div>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+
+
+            <div>
+                <div class="stats">
+                    <div class="stat">
+                        <span class="label">ALTERNATIVAS EVALUADAS</span>
+                        <strong id="examined">0</strong>
+                        <small id="candidateCount">de 12 posibles</small>
+                    </div>
+                    <div class="stat">
+                        <span class="label">CICLOS VÁLIDOS</span>
+                        <strong id="validCount">0</strong>
+                        <small id="rejectedCount">0 descartados</small>
+                    </div>
+                    <div class="stat accent">
+                        <span class="label" id="bestLabel">MEJOR DISTANCIA PROVISIONAL</span>
+                        <strong id="bestCost">—</strong>
+                        <small id="tieCount">Sin rutas evaluadas</small>
+                    </div>
+                    <div class="stat">
+                        <span class="label">TIEMPO DE BÚSQUEDA</span>
+                        <strong id="elapsed">0,00 s</strong>
+                        <small>Tiempo activo de exploración</small>
+                    </div>
+                </div>
+
+
+                <section class="card" style="margin-top: 18px">
+                    <div class="card-head">
+                        <h2><span class="stepnum">3</span>Red de reparto</h2>
+                        <div style="display: flex; gap: 8px; align-items: center">
+                            <span id="phase" class="pill">Por verificar</span>
+                            <button id="exportGraph" class="small" title="Descargar la imagen del grafo en formato SVG">Guardar grafo</button>
+                        </div>
+                    </div>
+                    <div class="graph-zone">
+                        <svg id="graph" viewBox="0 0 760 400" role="img" aria-label="Grafo de la red de reparto"></svg>
+                        <div class="legend">
+                            <span><i></i>Conexión disponible</span>
+                            <span><i class="current"></i>Última alternativa</span>
+                            <span><i class="best"></i>Mejor recorrido encontrado</span>
+                        </div>
+                    </div>
+                    <div class="route-summary">
+                        <div>
+                            <div class="label" id="routeLabel">MEJOR RECORRIDO PROVISIONAL</div>
+                            <div class="route" id="bestRoute">Verifica el grafo y comienza la exploración.</div>
+                        </div>
+                        <div class="distance" id="routeDistance">—</div>
+                    </div>
+                </section>
+
+
+                <section class="card results">
+                    <div class="card-head">
+                        <div>
+                            <h2>Ciclos hamiltonianos encontrados</h2>
+                            <p class="muted" style="font-size: 12px; margin-top: 3px">Una fila por ciclo; el recorrido inverso se cuenta una sola vez.</p>
+                        </div>
+                    </div>
+                    <div class="results-toolbar">
+                        <label class="field" style="display: flex; align-items: center; gap: 8px">
+                            Mostrar
+                            <select id="filter">
+                                <option value="all">Todos los ciclos</option>
+                                <option value="best">Mejores encontrados</option>
+                            </select>
+                        </label>
+                        <div class="buttons">
+                            <button id="exportCSV" class="small" disabled>Descargar CSV</button>
+                            <button id="exportReport" class="small" disabled>Resumen TXT</button>
+                        </div>
+                    </div>
+                    <div class="table-scroll">
+                        <table class="routes">
+                            <thead>
+                                <tr>
+                                    <th>N.º</th>
+                                    <th>Recorrido</th>
+                                    <th>Distancia</th>
+                                </tr>
+                            </thead>
+                            <tbody id="routeRows">
+                                <tr>
+                                    <td colspan="3" class="empty">Los ciclos válidos aparecerán durante la exploración.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <span id="pageInfo">Sin resultados</span>
+                        <div>
+                            <button id="prevPage" class="small" disabled aria-label="Página anterior">←</button>
+                            <span id="pageNumber">0 / 0</span>
+                            <button id="nextPage" class="small" disabled aria-label="Página siguiente">→</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+
+        <details class="explain">
+            <summary>Cómo funciona el algoritmo y qué significan los resultados</summary>
+            <p>Se fija A como origen y se generan todas las permutaciones de los demás vértices. En cada alternativa se comprueba que existan las conexiones consecutivas y la conexión de regreso a A. Si faltan aristas, la alternativa se descarta; si todas existen, se suman sus distancias y se compara el total con el mejor valor encontrado.</p>
+            <p>En un grafo no dirigido, un ciclo y su inverso tienen el mismo costo. Por eso se evalúa una sola orientación de cada ciclo. En un grafo completo hay (n − 1)! / 2 ciclos distintos: para 5 vértices son 12; para 10, 181 440. En grafos incompletos habrá menos ciclos válidos, pero se revisa el mismo conjunto de alternativas.</p>
+            <p>La verificación inicial busca un ciclo válido. Cuando no existe ninguno, revisa las alternativas y propone las aristas ausentes de un recorrido con la menor cantidad de conexiones faltantes. Las distancias nuevas las introduce el usuario. Pueden existir otras formas de completar el grafo.</p>
+            <p>El mejor resultado es provisional hasta terminar la búsqueda. Al completar todas las alternativas, la menor distancia está certificada por fuerza bruta y se muestran todos los ciclos que la alcanzan. El método ofrece una solución exacta para estos casos pequeños; su crecimiento factorial limita su uso en redes grandes.</p>
+        </details>
+    </main>
+
+
+    <footer class="footer">
+        Proyecto de Matemática Computacional · Datos simulados · Aplicación local sin dependencias externas
+    </footer>
+
+
+    <script>
+        "use strict";
+
+
+        const Engine = {
+            parseWeight(text) {
+                const value = String(text).trim().replace(",", ".");
+                if (value === "") return null;
+                if (!/^\d+(\.\d{1,2})?$/.test(value)) throw Error("Usa números positivos con hasta 2 decimales.");
+                const [whole, fraction = ""] = value.split(".");
+                const units = Number(whole) * 100 + Number(fraction.padEnd(2, "0"));
+                if (!Number.isSafeInteger(units) || units <= 0 || units > 10000000) {
+                    throw Error("Cada distancia debe ser mayor que 0 y menor o igual a 100 000 km.");
+                }
+                return units;
+            },
+
+
+            empty(n) {
+                return Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => i === j ? 0 : null));
+            },
+
+
+            count(n) {
+                let factorial = 1;
+                for (let i = 2; i < n; i++) factorial *= i;
+                return factorial / 2;
+            },
+
+
+            *routes(n) {
+                const values = Array.from({ length: n - 1 }, (_, i) => i + 1);
+                function* permute(position) {
+                    if (position === values.length) {
+                        if (values[0] < values[values.length - 1]) yield [0, ...values, 0];
+                        return;
+                    }
+                    for (let i = position; i < values.length; i++) {
+                        [values[position], values[i]] = [values[i], values[position]];
+                        yield* permute(position + 1);
+                        [values[position], values[i]] = [values[i], values[position]];
+                    }
+                }
+                yield* permute(0);
+            },
+
+
+            evaluate(matrix, route) {
+                const missing = [], weights = [];
+                let cost = 0;
+                for (let i = 0; i < route.length - 1; i++) {
+                    const a = route[i], b = route[i + 1], weight = matrix[a][b];
+                    if (weight === null) {
+                        missing.push([a, b]);
+                    } else {
+                        weights.push(weight);
+                        cost += weight;
+                    }
+                }
+                return {
+                    route,
+                    cost: missing.length ? null : cost,
+                    weights,
+                    missing,
+                    valid: missing.length === 0
+                };
+            },
+
+
+            example(n = 5) {
+                const base = [
+                    [0, 4, 6, 8, 5],
+                    [4, 0, 3, 7, 6],
+                    [6, 3, 0, 4, 5],
+                    [8, 7, 4, 0, 2],
+                    [5, 6, 5, 2, 0]
+                ];
+                const matrix = this.empty(n);
+                for (let a = 0; a < n; a++) {
+                    for (let b = a + 1; b < n; b++) {
+                        const weight = a < 5 && b < 5 ? base[a][b] : 3 + ((a + 1) * (b + 1) * 7 + (a + b) * 3) % 26;
+                        matrix[a][b] = matrix[b][a] = weight * 100;
+                    }
+                }
+                return matrix;
+            },
+
+
+            random(n) {
+                const matrix = this.empty(n);
+                const order = Array.from({ length: n }, (_, i) => i);
+                for (let i = n - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [order[i], order[j]] = [order[j], order[i]];
+                }
+                const connect = (a, b) => {
+                    matrix[a][b] = matrix[b][a] = (2 + Math.floor(Math.random() * 29)) * 100;
+                };
+                for (let i = 0; i < n; i++) connect(order[i], order[(i + 1) % n]);
+                for (let a = 0; a < n; a++) {
+                    for (let b = a + 1; b < n; b++) {
+                        if (matrix[a][b] === null && Math.random() < .48) connect(a, b);
+                    }
+                }
+                return matrix;
+            }
+        };
+
+
+        const $ = id => document.getElementById(id);
+        const letter = index => String.fromCharCode(65 + index);
+        const num = value => value.toLocaleString("es-PE");
+        const distance = value => value === null ? "—" : (value / 100).toLocaleString("es-PE", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+        const routeText = route => route.map(letter).join(" → ");
+
+
+        const state = {
+            matrix: Engine.example(),
+            phase: "idle",
+            verified: false,
+            iterator: null,
+            examined: 0,
+            rejected: 0,
+            cycles: [],
+            best: null,
+            bestIndices: [],
+            current: null,
+            page: 1,
+            token: 0,
+            time: 0,
+            repair: null
+        };
+        const PAGE_SIZE = 25;
+
+
+        function message(text, type = "") {
+            $("status").textContent = text;
+            $("status").className = "notice" + (type ? " " + type : "");
+        }
+
+
+        function setPhase(phase) {
+            state.phase = phase;
+            updateControls();
+        }
+
+
+        function updateControls() {
+            const busy = state.phase === "checking" || state.phase === "running";
+            const labels = {
+                idle: "Por verificar",
+                checking: "Verificando…",
+                ready: "Listo para explorar",
+                running: "Explorando…",
+                paused: "En pausa",
+                done: "Búsqueda completa",
+                noCycle: "Faltan conexiones"
+            };
+            $("phase").textContent = labels[state.phase];
+            $("phase").className = "pill" + (state.phase === "done" ? " done" : "");
+            
+            for (const id of ["vertexCount", "mode", "createGraph", "sampleGraph", "verify", "applyRepair"]) {
+                $(id).disabled = busy;
+            }
+            document.querySelectorAll("#matrix input").forEach(input => input.disabled = busy);
+            
+            $("step").disabled = $("run").disabled = busy || !state.verified || state.phase === "done";
+            $("run").textContent = state.phase === "paused" ? "Continuar" : "Ejecutar todo";
+            $("pause").disabled = state.phase !== "running";
+            $("reset").disabled = false;
+            $("exportCSV").disabled = $("exportReport").disabled = state.cycles.length === 0 || busy;
+            $("bestLabel").textContent = state.phase === "done" ? "DISTANCIA ÓPTIMA" : "MEJOR DISTANCIA PROVISIONAL";
+            $("routeLabel").textContent = state.phase === "done" ? "RECORRIDO ÓPTIMO" : "MEJOR RECORRIDO PROVISIONAL";
+            $("filter").options[1].textContent = state.phase === "done" ? "Solo ciclos óptimos" : "Mejores encontrados";
+        }
+
+
+        function clearAnalysis(keepVerification = false) {
+            state.token++;
+            state.iterator = null;
+            state.examined = 0;
+            state.rejected = 0;
+            state.cycles = [];
+            state.best = null;
+            state.bestIndices = [];
+            state.current = null;
+            state.page = 1;
+            state.time = 0;
+            state.repair = null;
+            $("repair").hidden = true;
+            state.verified = keepVerification;
+            setPhase(keepVerification ? "ready" : "idle");
+            renderResults();
+            renderGraph();
+        }
+
+
+        function editableWeight(weight) {
+            return weight === null ? "" : String(weight / 100);
+        }
+
+
+        function renderMatrix() {
+            const n = state.matrix.length;
+            let html = '<thead><tr><th scope="col">km</th>';
+            for (let i = 0; i < n; i++) html += '<th scope="col">' + letter(i) + '</th>';
+            html += '</tr></thead><tbody>';
+            
+            state.matrix.forEach((row, i) => {
+                html += '<tr><th scope="row">' + letter(i) + '</th>';
+                row.forEach((weight, j) => {
+                    if (i === j) {
+                        html += '<td class="diag">0</td>';
+                    } else if (i < j) {
+                        html += `<td><input inputmode="decimal" maxlength="12" data-a="${i}" data-b="${j}" aria-label="Distancia ${letter(i)} a ${letter(j)} en kilómetros" value="${editableWeight(weight)}" placeholder="—"></td>`;
+                    } else {
+                        html += `<td id="mirror-${i}-${j}">${distance(weight)}</td>`;
+                    }
+                });
+                html += '</tr>';
+            });
+            html += '</tbody>';
+            
+            $("matrix").innerHTML = html;
+            $("matrix").style.minWidth = n > 7 ? "350px" : "0";
+            
+            $("matrix").querySelectorAll("input").forEach(input => {
+                input.addEventListener("input", () => {
+                    clearAnalysis(false);
+                    try {
+                        const weight = Engine.parseWeight(input.value);
+                        const a = Number(input.dataset.a);
+                        const b = Number(input.dataset.b);
+                        state.matrix[a][b] = state.matrix[b][a] = weight;
+                        input.classList.remove("invalid");
+                        $("mirror-" + b + "-" + a).textContent = distance(weight);
+                        message("Grafo modificado. Verifica sus conexiones antes de explorar.");
+                    } catch (error) {
+                        input.classList.add("invalid");
+                        message(error.message, "error");
+                    }
+                    renderGraph();
+                    renderResults();
+                });
+            });
+        }
+
+
+        function syncMatrix() {
+            let firstBad = null;
+            $("matrix").querySelectorAll("input").forEach(input => {
+                try {
+                    const weight = Engine.parseWeight(input.value);
+                    const a = Number(input.dataset.a);
+                    const b = Number(input.dataset.b);
+                    state.matrix[a][b] = state.matrix[b][a] = weight;
+                    input.classList.remove("invalid");
+                    $("mirror-" + b + "-" + a).textContent = distance(weight);
+                } catch (error) {
+                    input.classList.add("invalid");
+                    if (!firstBad) firstBad = { input, text: error.message };
+                }
+            });
+            if (firstBad) {
+                message(firstBad.text, "error");
+                firstBad.input.focus();
+                return false;
+            }
+            return true;
+        }
+
+
+        function loadGraph(matrix) {
+            state.matrix = matrix;
+            clearAnalysis(false);
+            $("vertexCount").value = matrix.length;
+            renderMatrix();
+            renderGraph();
+            renderResults();
+            message("Grafo cargado. Verifica la existencia de un ciclo hamiltoniano para comenzar.");
+        }
+
+
+        function edgeKey(a, b) {
+            return Math.min(a, b) + "-" + Math.max(a, b);
+        }
+
+
+        function routeEdges(route) {
+            return new Set(route ? route.slice(0, -1).map((vertex, i) => edgeKey(vertex, route[i + 1])) : []);
+        }
+
+
+        function renderGraph() {
+            const n = state.matrix.length;
+            const points = Array.from({ length: n }, (_, i) => ({
+                x: 380 + 178 * Math.cos(-Math.PI / 2 + 2 * Math.PI * i / n),
+                y: 200 + 151 * Math.sin(-Math.PI / 2 + 2 * Math.PI * i / n)
+            }));
+            
+            $("graph").setAttribute("viewBox", window.innerWidth < 840 ? "160 0 440 400" : "0 0 760 400");
+            
+            const best = routeEdges(state.bestIndices.length ? state.cycles[state.bestIndices[0]].route : null);
+            const current = routeEdges(state.phase === "done" ? null : state.current?.route);
+            const lines = [], weightLabels = [], highlighted = [];
+            let edges = 0;
+            
+            for (let i = 0; i < n; i++) {
+                for (let j = i + 1; j < n; j++) {
+                    const weight = state.matrix[i][j];
+                    if (weight === null) continue;
+                    edges++;
+                    const a = points[i], b = points[j];
+                    const key = edgeKey(i, j);
+                    const isBest = best.has(key);
+                    const isCurrent = current.has(key);
+                    const stroke = isBest ? "#087c70" : isCurrent ? "#d59935" : "#b9cbd5";
+                    const width = isBest ? 4.5 : isCurrent ? 3 : 1.4;
+                    const opacity = isBest || isCurrent ? 1 : .65;
+                    const line = `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${stroke}" stroke-width="${width}" opacity="${opacity}"/>`;
+                    
+                    if (isBest || isCurrent) highlighted.push(line);
+                    else lines.push(line);
+                    
+                    const t = .34 + ((i * 7 + j * 3) % 5) * .075;
+                    const x = a.x + (b.x - a.x) * t;
+                    const y = a.y + (b.y - a.y) * t;
+                    const label = distance(weight);
+                    const box = Math.max(27, label.length * 7 + 10);
+                    
+                    weightLabels.push(`<g><rect x="${x - box / 2}" y="${y - 9}" width="${box}" height="18" rx="5" fill="white" stroke="${isBest ? "#b2dfd0" : "#e2eaf0"}"/><text x="${x}" y="${y + 4}" text-anchor="middle" fill="${isBest ? "#087c70" : "#526e7f"}" font-size="11" font-family="system-ui,sans-serif">${label}</text></g>`);
+                }
+            }
+            
+            const nodes = points.map((point, i) => `
+                <g>
+                    <circle cx="${point.x}" cy="${point.y}" r="${i === 0 ? 23 : 20}" fill="${i === 0 ? "#173e55" : "white"}" stroke="${i === 0 ? "#173e55" : "#8bafbd"}" stroke-width="2"/>
+                    <text x="${point.x}" y="${point.y + 5}" fill="${i === 0 ? "white" : "#173e55"}" font-size="15" font-weight="700" text-anchor="middle" font-family="system-ui,sans-serif">${letter(i)}</text>
+                    ${i === 0 ? `<text x="${point.x}" y="${point.y - 32}" fill="#617482" font-size="10" text-anchor="middle" font-family="system-ui,sans-serif">ALMACÉN</text>` : ""}
+                </g>
+            `).join("");
+            
+            $("graph").innerHTML = "<title>Red de " + n + " lugares y " + edges + " conexiones</title><desc>Los pesos representan kilómetros. El almacén es A. Las líneas verdes muestran el mejor recorrido encontrado.</desc>" + lines.join("") + highlighted.join("") + weightLabels.join("") + nodes;
+            $("edgeCount").textContent = edges + " aristas";
+        }
+
+
+        function verifyGraph() {
+            if (!syncMatrix()) return;
+            clearAnalysis(false);
+            setPhase("checking");
+            message("Buscando un ciclo hamiltoniano mediante fuerza bruta…");
+            const token = state.token;
+            const iterator = Engine.routes(state.matrix.length);
+            let checked = 0, bestRepair = null;
+
+
+            function block() {
+                if (token !== state.token) return;
+                for (let i = 0; i < 700; i++) {
+                    const item = iterator.next();
+                    if (item.done) {
+                        setPhase("noCycle");
+                        state.repair = bestRepair;
+                        message("No existe un ciclo hamiltoniano. Completa las conexiones sugeridas o edita el grafo.", "warning");
+                        showRepair(bestRepair);
+                        renderGraph();
+                        return;
+                    }
+                    const result = Engine.evaluate(state.matrix, item.value);
+                    checked++;
+                    if (result.valid) {
+                        state.verified = true;
+                        setPhase("ready");
+                        message("Ciclo hamiltoniano confirmado: " + routeText(result.route) + ". Ya puedes explorar todas las alternativas.", "success");
+                        return;
+                    }
+                    if (!bestRepair || result.missing.length < bestRepair.missing.length) {
+                        bestRepair = result;
+                    }
+                }
+                message("Verificando: " + num(checked) + " de " + num(Engine.count(state.matrix.length)) + " alternativas revisadas…");
+                setTimeout(block, 0);
+            }
+            setTimeout(block, 0);
+        }
+
+
+        function showRepair(result) {
+            $("repair").hidden = false;
+            $("repairRoute").textContent = "Recorrido propuesto: " + routeText(result.route) + ".";
+            $("repairFields").innerHTML = result.missing.map(([a, b], i) => `
+                <label class="repair-row">
+                    ${letter(a)}–${letter(b)}
+                    <input inputmode="decimal" id="repair-${i}" aria-label="Distancia nueva ${letter(a)} a ${letter(b)}" placeholder="Distancia en km">
+                </label>
+            `).join("");
+        }
+
+
+        function applyRepair() {
+            if (!state.repair) return;
+            const values = [];
+            try {
+                state.repair.missing.forEach((edge, i) => {
+                    const weight = Engine.parseWeight($("repair-" + i).value);
+                    if (weight === null) throw Error("Completa todas las distancias de las conexiones sugeridas.");
+                    values.push(weight);
+                });
+            } catch (error) {
+                message(error.message, "error");
+                return;
+            }
+            state.repair.missing.forEach(([a, b], i) => state.matrix[a][b] = state.matrix[b][a] = values[i]);
+            renderMatrix();
+            verifyGraph();
+        }
+
+
+        function ensureIterator() {
+            if (!state.iterator) state.iterator = Engine.routes(state.matrix.length);
+        }
+
+
+        function evaluateNext() {
+            const item = state.iterator.next();
+            if (item.done) return false;
+            const result = Engine.evaluate(state.matrix, item.value);
+            state.current = result;
+            state.examined++;
+            if (result.valid) {
+                const index = state.cycles.length;
+                state.cycles.push(result);
+                if (state.best === null || result.cost < state.best) {
+                    state.best = result.cost;
+                    state.bestIndices = [index];
+                } else if (result.cost === state.best) {
+                    state.bestIndices.push(index);
+                }
+            } else {
+                state.rejected++;
+            }
+            return true;
+        }
+
+
+        function finish() {
+            setPhase("done");
+            renderResults();
+            renderGraph();
+            message("Búsqueda completa: " + num(state.cycles.length) + " ciclos válidos. Distancia óptima: " + distance(state.best) + " km. " + num(state.bestIndices.length) + " ciclo(s) alcanzan ese valor.", "success");
+        }
+
+
+        function nextStep() {
+            if (!state.verified || state.phase === "running" || state.phase === "checking" || state.phase === "done") return;
+            ensureIterator();
+            const start = performance.now();
+            evaluateNext();
+            state.time += performance.now() - start;
+            if (state.examined === Engine.count(state.matrix.length)) {
+                finish();
+            } else {
+                setPhase("paused");
+                renderResults();
+                renderGraph();
+                message("Alternativa " + num(state.examined) + " evaluada. El mejor resultado aún es provisional.");
+            }
+        }
+
+
+        function runAll() {
+            if (!state.verified || state.phase === "running" || state.phase === "checking" || state.phase === "done") return;
+            ensureIterator();
+            setPhase("running");
+            const token = state.token;
+            let lastPaint = 0;
+            message("Explorando todas las alternativas. Puedes pausar y continuar paso a paso.");
+
+
+            function block() {
+                if (token !== state.token || state.phase !== "running") return;
+                const slow = $("speed").value === "slow";
+                const start = performance.now();
+                for (let i = 0; i < (slow ? 1 : 850); i++) {
+                    if (!evaluateNext()) break;
+                    if (state.examined === Engine.count(state.matrix.length)) break;
+                }
+                state.time += performance.now() - start;
+                if (state.examined === Engine.count(state.matrix.length)) {
+                    finish();
+                    return;
+                }
+                if (slow || performance.now() - lastPaint > 120) {
+                    renderResults();
+                    renderGraph();
+                    lastPaint = performance.now();
+                }
+                setTimeout(block, slow ? 600 : 0);
+            }
+            setTimeout(block, 0);
+        }
+
+
+        function pause() {
+            if (state.phase !== "running") return;
+            state.token++;
+            setPhase("paused");
+            renderResults();
+            renderGraph();
+            message("Búsqueda en pausa. Continúa con «Siguiente paso» o «Continuar».");
+        }
+
+
+        function visibleCycles() {
+            return $("filter").value === "best" ? state.bestIndices.map(index => ({ index, result: state.cycles[index] })) : null;
+        }
+
+
+        function renderTable() {
+            const selected = visibleCycles();
+            const total = selected ? selected.length : state.cycles.length;
+            const pages = Math.ceil(total / PAGE_SIZE);
+            state.page = Math.max(1, Math.min(state.page, pages || 1));
+            const from = (state.page - 1) * PAGE_SIZE;
+            const to = Math.min(from + PAGE_SIZE, total);
+            
+            let html = "";
+            for (let i = from; i < to; i++) {
+                const { index, result } = selected ? selected[i] : { index: i, result: state.cycles[i] };
+                const best = result.cost === state.best;
+                html += `
+                    <tr${best ? ' class="optimal"' : ""}>
+                        <td>${num(index + 1)}</td>
+                        <td class="route-cell">
+                            ${routeText(result.route)}
+                            ${best ? `<span class="optimal-label">${state.phase === "done" ? "Óptimo" : "Mejor"}</span>` : ""}
+                        </td>
+                        <td><strong>${distance(result.cost)}</strong> km</td>
+                    </tr>
+                `;
+            }
+            
+            $("routeRows").innerHTML = html || `<tr><td colspan="3" class="empty" style="text-align:center">${state.phase === "done" ? "No hay ciclos para mostrar." : "Los ciclos válidos aparecerán durante la exploración."}</td></tr>`;
+            $("pageInfo").textContent = total ? "Mostrando " + num(from + 1) + "–" + num(to) + " de " + num(total) : "Sin resultados";
+            $("pageNumber").textContent = (pages ? state.page : 0) + " / " + num(pages);
+            $("prevPage").disabled = state.page <= 1;
+            $("nextPage").disabled = state.page >= pages;
+        }
+
+
+        function renderResults() {
+            const total = Engine.count(state.matrix.length);
+            const percent = Math.floor(100 * state.examined / total);
+            
+            $("examined").textContent = num(state.examined);
+            $("candidateCount").textContent = "de " + num(total) + " posibles";
+            $("validCount").textContent = num(state.cycles.length);
+            $("rejectedCount").textContent = num(state.rejected) + " descartados";
+            $("bestCost").textContent = state.best === null ? "—" : distance(state.best) + " km";
+            $("tieCount").textContent = state.bestIndices.length ? num(state.bestIndices.length) + " ciclo(s) con este valor" : "Sin rutas evaluadas";
+            $("elapsed").textContent = (state.time / 1000).toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " s";
+            $("progressText").textContent = num(state.examined) + " de " + num(total) + " alternativas";
+            $("progressPercent").textContent = percent + " %";
+            $("progressFill").style.width = percent + "%";
+            $("progressBar").setAttribute("aria-valuenow", String(percent));
+            
+            if (state.current) {
+                const result = state.current;
+                $("currentRoute").textContent = routeText(result.route);
+                $("currentDetail").textContent = result.valid 
+                    ? "Ciclo válido: visita todos los vértices y regresa a A." 
+                    : "Descartado. Faltan las conexiones: " + result.missing.map(([a, b]) => letter(a) + "–" + letter(b)).join(", ") + ".";
+                $("currentCalc").textContent = result.valid 
+                    ? result.weights.map(distance).join(" + ") + " = " + distance(result.cost) + " km" 
+                    : "No se calcula costo para una ruta incompleta.";
+            } else {
+                $("currentRoute").textContent = "Todavía no hay un recorrido";
+                $("currentDetail").textContent = "El primer vértice siempre será A.";
+                $("currentCalc").textContent = "";
+            }
+            
+            $("bestRoute").textContent = state.bestIndices.length 
+                ? routeText(state.cycles[state.bestIndices[0]].route) 
+                : "Verifica el grafo y comienza la exploración.";
+            $("routeDistance").textContent = state.best === null ? "—" : distance(state.best) + " km";
+            
+            renderTable();
+            updateControls();
+        }
+
+
+        function download(text, type, name) {
+            const url = URL.createObjectURL(new Blob([text], { type }));
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = name;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
+
+        function csv() {
+            if (!state.cycles.length) return;
+            const rows = [
+                ["Estado", state.phase === "done" ? "Busqueda completa" : "Resultados parciales"],
+                ["Vertice inicial", "A"],
+                ["Numero de vertices", state.matrix.length],
+                ["Alternativas evaluadas", state.examined],
+                [],
+                ["Numero", "Recorrido", "Distancia (km)", "Clasificacion"]
+            ];
+            state.cycles.forEach((result, i) => {
+                rows.push([
+                    i + 1,
+                    routeText(result.route),
+                    (result.cost / 100).toFixed(2),
+                    result.cost === state.best ? (state.phase === "done" ? "Optimo" : "Mejor provisional") : "Valido"
+                ]);
+            });
+            const content = rows.map(row => row.map(value => '"' + String(value).replaceAll('"', '""') + '"').join(";")).join("\r\n");
+            download("\ufeff" + content, "text/csv;charset=utf-8", "ciclos_agente_viajero.csv");
+        }
+
+
+        function report() {
+            if (!state.cycles.length) return;
+            const complete = state.phase === "done";
+            const n = state.matrix.length;
+            const lines = [
+                "PROBLEMA DEL AGENTE VIAJERO · MATEMÁTICA COMPUTACIONAL",
+                complete ? "RESULTADOS FINALES" : "RESULTADOS PARCIALES",
+                "Datos simulados. Distancias en kilómetros.",
+                "Método: fuerza bruta. A como origen; ciclos inversos equivalentes.",
+                "Vértices: " + n,
+                "Alternativas evaluadas: " + state.examined + " / " + Engine.count(n),
+                "Ciclos válidos: " + state.cycles.length,
+                "Descartados: " + state.rejected,
+                (complete ? "Distancia óptima: " : "Mejor distancia provisional: ") + distance(state.best) + " km",
+                "Tiempo activo de cálculo: " + (state.time / 1000).toFixed(3) + " s",
+                "",
+                "MATRIZ DE COSTOS",
+                "\t" + Array.from({ length: n }, (_, i) => letter(i)).join("\t"),
+                ...state.matrix.map((row, i) => letter(i) + "\t" + row.map(distance).join("\t")),
+                "",
+                complete ? "CICLOS ÓPTIMOS" : "MEJORES CICLOS ENCONTRADOS",
+                ...state.bestIndices.map(index => routeText(state.cycles[index].route) + " | " + distance(state.best) + " km"),
+                ""
+            ];
+            if (!complete) lines.push("La búsqueda no ha terminado. El mínimo mostrado todavía no está certificado.");
+            lines.push("El detalle de todos los ciclos encontrados se puede descargar desde la aplicación en CSV.");
+            download(lines.join("\n"), "text/plain;charset=utf-8", "resumen_agente_viajero.txt");
+        }
+
+
+        $("createGraph").addEventListener("click", () => {
+            const n = Number($("vertexCount").value);
+            if (!Number.isInteger(n) || n < 5 || n > 10) {
+                message("La cantidad de vértices debe ser un entero entre 5 y 10.", "error");
+                $("vertexCount").focus();
+                return;
+            }
+            loadGraph($("mode").value === "random" ? Engine.random(n) : Engine.empty(n));
+        });
+
+
+        $("sampleGraph").addEventListener("click", () => {
+            const n = Number($("vertexCount").value);
+            if (!Number.isInteger(n) || n < 5 || n > 10) {
+                message("La cantidad de vértices debe ser un entero entre 5 y 10.", "error");
+                $("vertexCount").focus();
+                return;
+            }
+            $("mode").value = "manual";
+            loadGraph(Engine.example(n));
+            message("Ejemplo de reparto cargado: " + n + " lugares y " + num(n * (n - 1) / 2) + " conexiones. Verifica el grafo para explorar sus " + num(Engine.count(n)) + " ciclos.");
+        });
+
+
+        $("verify").addEventListener("click", verifyGraph);
+        $("applyRepair").addEventListener("click", applyRepair);
+        $("step").addEventListener("click", nextStep);
+        $("run").addEventListener("click", runAll);
+        $("pause").addEventListener("click", pause);
+
+
+        $("reset").addEventListener("click", () => {
+            const verified = state.verified;
+            clearAnalysis(verified);
+            message(verified ? "Análisis reiniciado. Puedes explorar otra vez el mismo grafo." : "Análisis reiniciado. Verifica el grafo para comenzar.");
+        });
+
+
+        $("filter").addEventListener("change", () => {
+            state.page = 1;
+            renderTable();
+        });
+
+
+        $("prevPage").addEventListener("click", () => {
+            state.page--;
+            renderTable();
+        });
+
+
+        $("nextPage").addEventListener("click", () => {
+            state.page++;
+            renderTable();
+        });
+
+
+        $("exportCSV").addEventListener("click", csv);
+        $("exportReport").addEventListener("click", report);
+
+
+        $("exportGraph").addEventListener("click", () => {
+            const clone = $("graph").cloneNode(true);
+            clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+            clone.setAttribute("width", "760");
+            clone.setAttribute("height", "400");
+            download(new XMLSerializer().serializeToString(clone), "image/svg+xml;charset=utf-8", "grafo_agente_viajero.svg");
+        });
+
+
+        window.addEventListener("resize", renderGraph);
+        renderMatrix();
+        renderGraph();
+        renderResults();
+    </script>
+</body>
+</html>
